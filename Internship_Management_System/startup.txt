@@ -1,0 +1,2 @@
+to start the server we have to type "python backend\app.py" in terminal
+to access the ewwbsite we have to type this "http://127.0.0.1:5000" in chrome

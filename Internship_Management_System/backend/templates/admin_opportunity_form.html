@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+
+{% if opportunity %}
+    {% set page_title = "Edit Internship" %}
+{% else %}
+    {% set page_title = "Add Internship" %}
+{% endif %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+
+<section class="section page-top">
+
+    <div class="section-heading left">
+
+        <div>
+            <span class="eyebrow">ADMIN PANEL</span>
+            <h2>{{ page_title }}</h2>
+            <p>Enter the internship opportunity details below.</p>
+        </div>
+
+        <a href="{{ url_for('admin') }}"
+           class="btn secondary">
+            ← Back to Dashboard
+        </a>
+
+    </div>
+
+
+    <div class="form-card neu">
+
+        {% if error %}
+
+        <div class="alert error">
+            {{ error }}
+        </div>
+
+        {% endif %}
+
+
+        <form method="POST">
+
+            <div class="form-grid">
+
+                <!-- Organization -->
+
+                <div class="form-group">
+
+                    <label for="organization_id">
+                        Organization
+                    </label>
+
+                    <select
+                        id="organization_id"
+                        name="organization_id"
+                        required
+                    >
+
+                        <option value="">
+                            Select organization
+                        </option>
+
+                        {% for organization in organizations %}
+
+                        <option
+                            value="{{ organization.organization_id }}"
+                            {% if opportunity and
+                               opportunity.organization_id ==
+                               organization.organization_id %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ organization.name }}
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- Title -->
+
+                <div class="form-group">
+
+                    <label for="title">
+                        Internship Title
+                    </label>
+
+                    <input
+                        type="text"
+                        id="title"
+                        name="title"
+                        placeholder="e.g. Python Developer Intern"
+                        value="{{ opportunity.title if opportunity else '' }}"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- Location -->
+
+                <div class="form-group">
+
+                    <label for="location">
+                        Location
+                    </label>
+
+                    <input
+                        type="text"
+                        id="location"
+                        name="location"
+                        placeholder="e.g. Hyderabad"
+                        value="{{ opportunity.location if opportunity else '' }}"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- Slots -->
+
+                <div class="form-group">
+
+                    <label for="available_slots">
+                        Available Slots
+                    </label>
+
+                    <input
+                        type="number"
+                        id="available_slots"
+                        name="available_slots"
+                        min="1"
+                        placeholder="e.g. 5"
+                        value="{{ opportunity.available_slots if opportunity else '' }}"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- Start Date -->
+
+                <div class="form-group">
+
+                    <label for="start_date">
+                        Start Date
+                    </label>
+
+                    <input
+                        type="date"
+                        id="start_date"
+                        name="start_date"
+                        value="{{ opportunity.start_date if opportunity else '' }}"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- End Date -->
+
+                <div class="form-group">
+
+                    <label for="end_date">
+                        End Date
+                    </label>
+
+                    <input
+                        type="date"
+                        id="end_date"
+                        name="end_date"
+                        value="{{ opportunity.end_date if opportunity else '' }}"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- Description -->
+
+            <div class="form-group">
+
+                <label for="description">
+                    Description
+                </label>
+
+                <textarea
+                    id="description"
+                    name="description"
+                    rows="5"
+                    placeholder="Enter internship description..."
+                >{{ opportunity.description if opportunity else '' }}</textarea>
+
+            </div>
+
+
+            <div class="form-actions">
+
+                <a
+                    href="{{ url_for('admin') }}"
+                    class="btn secondary"
+                >
+                    Cancel
+                </a>
+
+                <button
+                    type="submit"
+                    class="btn primary"
+                >
+
+                    {% if opportunity %}
+                        Update Internship
+                    {% else %}
+                        Add Internship
+                    {% endif %}
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</section>
+
+{% endblock %}

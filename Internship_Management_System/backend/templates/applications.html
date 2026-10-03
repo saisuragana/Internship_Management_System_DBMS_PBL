@@ -1,0 +1,289 @@
+{% extends "base.html" %}
+
+{% block title %}My Applications{% endblock %}
+
+{% block content %}
+
+<section class="section page-top">
+
+    <div class="section-heading left">
+
+        <div>
+
+            <span class="eyebrow">
+                APPLICATIONS
+            </span>
+
+            <h2>
+                My Applications
+            </h2>
+
+            <p>
+                Follow each application from submission to internship assignment.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    {% set stage = {
+        'Applied': 0,
+        'Shortlisted': 1,
+        'Approved': 2
+    } %}
+
+
+    <div class="card-grid">
+
+        {% for application in applications %}
+
+        {% set s = stage.get(application.status, -1) %}
+
+        <article
+            class="glass card tilt"
+            data-tilt
+        >
+
+            <!-- ================================================= -->
+            <!-- TOP -->
+            <!-- ================================================= -->
+
+            <div class="card-top">
+
+                <span class="pill">
+                    {{ application.organization }}
+                </span>
+
+
+                <span
+                    class="pill status status-{{ application.status|lower }}"
+                >
+                    {{ application.status }}
+                </span>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- INTERNSHIP -->
+            <!-- ================================================= -->
+
+            <h3>
+                {{ application.title }}
+            </h3>
+
+
+            <div class="meta">
+
+                <span>
+                    📅 Applied
+                    {{ application.application_date|pretty_date }}
+                </span>
+
+                <span>
+                    #{{ application.application_id }}
+                </span>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- APPLICATION TRACKER -->
+            <!-- ================================================= -->
+
+            {% if application.status == 'Rejected' %}
+
+            <div class="tracker rejected">
+
+                <div class="track-node done">
+                    <i></i>
+                    <span>Applied</span>
+                </div>
+
+                <div class="track-node bad">
+                    <i></i>
+                    <span>Not selected</span>
+                </div>
+
+            </div>
+
+            {% else %}
+
+            <div class="tracker">
+
+                <div
+                    class="track-node {{ 'done' if s >= 0 }}"
+                >
+                    <i></i>
+                    <span>Applied</span>
+                </div>
+
+
+                <div
+                    class="track-node {{ 'done' if s >= 1 }}"
+                >
+                    <i></i>
+                    <span>Shortlisted</span>
+                </div>
+
+
+                <div
+                    class="track-node {{ 'done' if s >= 2 }}"
+                >
+                    <i></i>
+                    <span>Approved</span>
+                </div>
+
+            </div>
+
+            {% endif %}
+
+
+            <!-- ================================================= -->
+            <!-- APPROVAL INFORMATION -->
+            <!-- ================================================= -->
+
+            {% if application.status == 'Approved' %}
+
+            <div class="application-approved-box">
+
+                <div class="approval-title">
+                    ✓ Internship Approved
+                </div>
+
+                {% if application.approval_date %}
+
+                <div class="approval-detail">
+
+                    Approved on:
+                    {{ application.approval_date|pretty_date }}
+
+                </div>
+
+                {% endif %}
+
+
+                {% if application.approval_remarks %}
+
+                <div class="approval-detail">
+
+                    Remarks:
+                    {{ application.approval_remarks }}
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+            {% endif %}
+
+
+            <!-- ================================================= -->
+            <!-- ASSIGNMENT INFORMATION -->
+            <!-- ================================================= -->
+
+            {% if application.assignment_id %}
+
+            <div class="assignment-student-box">
+
+                <div class="assignment-title">
+                    🎯 Internship Assignment
+                </div>
+
+
+                <div class="assignment-detail">
+
+                    <strong>
+                        Faculty Mentor
+                    </strong>
+
+                    <span>
+                        {{ application.faculty_mentor }}
+                    </span>
+
+                </div>
+
+
+                <div class="assignment-detail">
+
+                    <strong>
+                        Company Supervisor
+                    </strong>
+
+                    <span>
+                        {{ application.company_supervisor }}
+                    </span>
+
+                </div>
+
+
+                {% if application.assigned_date %}
+
+                <div class="assignment-detail">
+
+                    <strong>
+                        Assigned On
+                    </strong>
+
+                    <span>
+                        {{ application.assigned_date|pretty_date }}
+                    </span>
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+            {% elif application.status == 'Approved' %}
+
+            <div class="assignment-pending-box">
+
+                <strong>
+                    ⏳ Assignment Pending
+                </strong>
+
+                <span>
+                    Your internship has been approved.
+                    The faculty mentor and company supervisor
+                    will be assigned by the administrator.
+                </span>
+
+            </div>
+
+            {% endif %}
+
+
+        </article>
+
+
+        {% else %}
+
+        <div class="glass card empty">
+
+            <h3>
+                No applications yet
+            </h3>
+
+            <p class="description">
+                Apply for an internship and it will show up here.
+            </p>
+
+            <a
+                class="btn"
+                href="{{ url_for('opportunities') }}"
+            >
+                Browse Internships
+            </a>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+{% endblock %}

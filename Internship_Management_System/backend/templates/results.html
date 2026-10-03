@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Evaluation and certificate{% endblock %}
+
+{% block content %}
+<section class="section page-top">
+
+    <div class="section-heading left">
+        <h2>Evaluation and certificate</h2>
+        <p>Feedback from your faculty mentor and company supervisor.</p>
+    </div>
+
+    {% set shown = namespace(certs=[]) %}
+
+    <div class="card-grid">
+
+        {% for result in results %}
+        <article class="glass card tilt" data-tilt>
+
+            <div class="card-top">
+                <span class="pill">{{ result.organization }}</span>
+                {% if result.evaluator_type %}
+                <span class="pill pill-soft">{{ result.evaluator_type }} evaluation</span>
+                {% endif %}
+            </div>
+
+            <h3>{{ result.internship }}</h3>
+
+            {% if result.score is not none %}
+            <div class="score-row">
+                <div class="score-ring neu"
+                     style="--score: {{ result.score|float }}">
+                    <span>{{ '%g'|format(result.score|float) }}</span>
+                </div>
+                <p class="description">
+                    {{ result.remarks or 'No remarks were added.' }}
+                </p>
+            </div>
+            {% else %}
+            <p class="description">Evaluation is not available yet.</p>
+            {% endif %}
+
+            {% if result.certificate_no and result.certificate_no not in shown.certs %}
+            {% set shown.certs = shown.certs + [result.certificate_no] %}
+            <div class="certificate">
+                <div>
+                    <strong>🎓 Certificate issued</strong>
+                    <small>{{ result.certificate_no }}</small>
+                </div>
+                <small>{{ result.issue_date|pretty_date }}</small>
+            </div>
+            {% endif %}
+
+        </article>
+        {% else %}
+        <div class="glass card empty">
+            <h3>No results yet</h3>
+            <p class="description">
+                Evaluations and certificates appear here after your
+                internship is completed.
+            </p>
+        </div>
+        {% endfor %}
+
+    </div>
+</section>
+{% endblock %}

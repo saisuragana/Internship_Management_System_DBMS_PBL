@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+        {% block title %}InternshipHub{% endblock %} | InternshipHub
+    </title>
+
+    <!-- Set saved theme before page paints -->
+    <script>
+        try {
+            document.documentElement.dataset.theme =
+                localStorage.getItem("ih-theme") || "dark";
+        } catch (e) {}
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Sora:wght@500;600;700&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+
+<body class="{% block body_class %}{% endblock %}">
+
+    <!-- Animated background -->
+    <div class="aurora" aria-hidden="true">
+        <i></i>
+        <i></i>
+        <i></i>
+    </div>
+
+
+    <!-- =====================================================
+         NAVBAR
+         ===================================================== -->
+
+    <header class="navbar glass">
+
+        <!-- LOGO -->
+
+        <a href="{{ url_for('home') }}" class="logo">
+
+            <span class="logo-mark">
+                IH
+            </span>
+
+            <span>
+                Internship<b>Hub</b>
+            </span>
+
+        </a>
+
+
+        <!-- MOBILE MENU BUTTON -->
+
+        <button
+            class="nav-toggle"
+            id="navToggle"
+            aria-label="Open menu"
+            aria-expanded="false"
+        >
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
+
+        <!-- NAVIGATION -->
+
+        <nav
+            class="nav-links"
+            id="navLinks"
+        >
+
+            {% set ep = request.endpoint %}
+
+
+            <!-- =================================================
+                 ADMIN NAVBAR
+                 ================================================= -->
+
+            {% if admin_logged_in %}
+
+                <a
+                    href="{{ url_for('admin') }}"
+                    class="{{ 'active' if ep == 'admin' }}"
+                >
+                    Admin Dashboard
+                </a>
+
+
+                <a
+                    href="{{ url_for('admin') }}#applications"
+                >
+                    Applications
+                </a>
+
+
+                <a
+                    href="{{ url_for('admin_add_opportunity') }}"
+                    class="{{ 'active' if ep == 'admin_add_opportunity' }}"
+                >
+                    Add Internship
+                </a>
+
+
+                <div class="nav-actions">
+
+                    <button
+                        class="theme-toggle"
+                        id="themeToggle"
+                        aria-label="Switch light or dark theme"
+                    >
+                        <span class="sun">☀</span>
+                        <span class="moon">☾</span>
+                    </button>
+
+
+                    <span class="user-chip admin-chip">
+
+                        <span class="avatar">
+                            A
+                        </span>
+
+                        <span class="user-name">
+                            Administrator
+                        </span>
+
+                    </span>
+
+
+                    <a
+                        href="{{ url_for('admin_logout') }}"
+                        class="btn btn-ghost btn-sm"
+                    >
+                        Log out
+                    </a>
+
+                </div>
+
+
+            <!-- =================================================
+                 STUDENT / PUBLIC NAVBAR
+                 ================================================= -->
+
+            {% else %}
+
+
+                {% if logged_in %}
+
+                    <a
+                        href="{{ url_for('dashboard') }}"
+                        class="{{ 'active' if ep == 'dashboard' }}"
+                    >
+                        Dashboard
+                    </a>
+
+                {% else %}
+
+                    <a
+                        href="{{ url_for('home') }}"
+                        class="{{ 'active' if ep == 'home' }}"
+                    >
+                        Home
+                    </a>
+
+                {% endif %}
+
+
+                <a
+                    href="{{ url_for('opportunities') }}"
+                    class="{{ 'active' if ep == 'opportunities' }}"
+                >
+                    Internships
+                </a>
+
+
+                {% if logged_in %}
+
+                    <a
+                        href="{{ url_for('my_applications') }}"
+                        class="{{ 'active' if ep == 'my_applications' }}"
+                    >
+                        Applications
+                    </a>
+
+
+                    <a
+                        href="{{ url_for('progress') }}"
+                        class="{{ 'active' if ep == 'progress' }}"
+                    >
+                        Progress
+                    </a>
+
+
+                    <a
+                        href="{{ url_for('results') }}"
+                        class="{{ 'active' if ep == 'results' }}"
+                    >
+                        Results
+                    </a>
+
+                {% endif %}
+
+
+                <!-- STUDENT / PUBLIC ACTIONS -->
+
+                <div class="nav-actions">
+
+                    <button
+                        class="theme-toggle"
+                        id="themeToggle"
+                        aria-label="Switch light or dark theme"
+                    >
+                        <span class="sun">☀</span>
+                        <span class="moon">☾</span>
+                    </button>
+
+
+                    {% if logged_in %}
+
+                        <span
+                            class="user-chip"
+                            title="{{ student_name }}"
+                        >
+
+                            <span class="avatar">
+                                {{ student_initial }}
+                            </span>
+
+                            <span class="user-name">
+                                {{ student_name }}
+                            </span>
+
+                        </span>
+
+
+                        <a
+                            href="{{ url_for('logout') }}"
+                            class="btn btn-ghost btn-sm"
+                        >
+                            Log out
+                        </a>
+
+                    {% else %}
+
+                        <a
+                            href="{{ url_for('register') }}"
+                            class="btn btn-ghost btn-sm"
+                        >
+                            Sign up
+                        </a>
+
+
+                        <a
+                            href="{{ url_for('login') }}"
+                            class="btn btn-sm"
+                        >
+                            Student login
+                        </a>
+
+                    {% endif %}
+
+                </div>
+
+            {% endif %}
+
+        </nav>
+
+    </header>
+
+
+    <!-- =====================================================
+         TOAST MESSAGES
+         ===================================================== -->
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+
+        {% if messages %}
+
+            <div
+                class="toasts"
+                role="status"
+            >
+
+                {% for category, message in messages %}
+
+                    <div
+                        class="toast glass toast-{{ category }}"
+                    >
+                        {{ message }}
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% endif %}
+
+    {% endwith %}
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+         ===================================================== -->
+
+    <main>
+
+        {% block content %}{% endblock %}
+
+    </main>
+
+
+    <!-- =====================================================
+         FOOTER
+         ===================================================== -->
+
+    <footer class="footer">
+
+        <a
+            href="{{ url_for('home') }}"
+            class="logo"
+        >
+
+            <span class="logo-mark">
+                IH
+            </span>
+
+            <span>
+                Internship<b>Hub</b>
+            </span>
+
+        </a>
+
+
+        <p>
+            Internship application and progress monitoring system
+        </p>
+
+    </footer>
+
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+</body>
+
+</html>
