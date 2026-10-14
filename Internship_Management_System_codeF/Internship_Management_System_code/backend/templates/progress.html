@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Weekly progress{% endblock %}
+
+{% block content %}
+<section class="section page-top">
+
+    <div class="section-heading left">
+        <h2>Weekly progress</h2>
+        <p>Your submitted logs and hours for each internship.</p>
+    </div>
+
+    {% if logs %}
+    <div class="summary-row">
+        <div class="neu stat">
+            <strong>{{ logs|length }}</strong>
+            <span>Logs submitted</span>
+        </div>
+        <div class="neu stat">
+            <strong>{{ '%g'|format(total_hours) }}</strong>
+            <span>Hours logged</span>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="card-grid">
+
+        {% for log in logs %}
+        <article class="glass card tilt" data-tilt>
+
+            <div class="card-top">
+                <span class="pill">Week {{ log.week_no }}</span>
+                <span class="pill status status-{{ log.status|lower }}">
+                    {{ log.status }}
+                </span>
+            </div>
+
+            <h3>{{ log.internship }}</h3>
+
+            <p class="description">{{ log.activities }}</p>
+
+            <div class="meta">
+                <span>📅 {{ log.log_date|pretty_date }}</span>
+                <span>⏱ {{ '%g'|format(log.hours|float) }} hours</span>
+            </div>
+
+        </article>
+        {% else %}
+        <div class="glass card empty">
+            <h3>No weekly logs yet</h3>
+            <p class="description">
+                Logs appear here once your internship has started
+                and your mentor records your weekly work.
+            </p>
+        </div>
+        {% endfor %}
+
+    </div>
+</section>
+{% endblock %}

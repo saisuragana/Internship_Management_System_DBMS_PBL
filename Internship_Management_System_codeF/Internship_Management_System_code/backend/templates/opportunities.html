@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}Internships{% endblock %}
+
+{% block content %}
+<section class="section page-top">
+
+    <div class="section-heading left">
+        <h2>Find your next internship</h2>
+        <p>Browse openings from organizations on the platform.</p>
+    </div>
+
+    <div class="toolbar">
+        <input class="field search" id="searchBox" type="search"
+               placeholder="Search by title, company or city"
+               aria-label="Search internships">
+        <span class="muted" id="resultCount">
+            {{ opportunities|length }} internships
+        </span>
+    </div>
+
+    <div class="card-grid" id="cardGrid">
+
+        {% for opportunity in opportunities %}
+        {% set applied = opportunity.opportunity_id in applied_ids %}
+
+        <article class="glass card tilt" data-tilt data-search-item
+                 data-text="{{ (opportunity.title ~ ' ' ~ opportunity.organization_name ~ ' ' ~ opportunity.location)|lower }}">
+
+            <div class="card-top">
+                <span class="pill">{{ opportunity.organization_name }}</span>
+                <span class="pill pill-soft">
+                    {{ opportunity.available_slots }} slots
+                </span>
+            </div>
+
+            <h3>{{ opportunity.title }}</h3>
+
+            <p class="description">{{ opportunity.description }}</p>
+
+            <div class="meta">
+                <span>📍 {{ opportunity.location }}</span>
+                <span>
+                    📅 {{ opportunity.start_date|pretty_date }}
+                    – {{ opportunity.end_date|pretty_date }}
+                </span>
+            </div>
+
+            {% if not logged_in %}
+                <a class="btn btn-block"
+                   href="{{ url_for('login', next=url_for('opportunities')) }}">
+                    Log in to apply
+                </a>
+            {% elif applied %}
+                <button class="btn btn-block btn-done" type="button" disabled>
+                    ✓ Applied
+                </button>
+            {% else %}
+                <form method="POST"
+                      action="{{ url_for('apply', opportunity_id=opportunity.opportunity_id) }}">
+                    <button class="btn btn-block" type="submit">Apply now</button>
+                </form>
+            {% endif %}
+
+        </article>
+        {% else %}
+        <div class="glass card empty">
+            <h3>No internships yet</h3>
+            <p class="description">Check back soon.</p>
+        </div>
+        {% endfor %}
+
+    </div>
+
+    <div class="glass card empty" id="noMatch" hidden>
+        <h3>No matches</h3>
+        <p class="description">Try a different title, company or city.</p>
+    </div>
+
+</section>
+{% endblock %}

@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+
+{% block title %}Find and track your internship{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<section class="hero">
+
+    <div class="hero-copy">
+
+        <h1>
+            Your internship,
+            from first search to final certificate.
+        </h1>
+
+        <p class="lead">
+            Browse openings from real organizations, apply in one click,
+            log your weekly work and see your evaluation and certificate
+            without leaving one place.
+        </p>
+
+        <div class="hero-buttons">
+            <a href="{{ url_for('opportunities') }}" class="btn btn-lg">
+                Browse internships
+            </a>
+
+            {% if logged_in %}
+                <a href="{{ url_for('dashboard') }}" class="btn btn-ghost btn-lg">
+                    Open my dashboard
+                </a>
+            {% else %}
+                <a href="{{ url_for('login') }}" class="btn btn-ghost btn-lg">
+                    Student login
+                </a>
+            {% endif %}
+        </div>
+
+        <div class="hero-stats">
+            <div class="neu">
+                <strong>{{ stats.opportunities }}</strong>
+                <span>Open internships</span>
+            </div>
+            <div class="neu">
+                <strong>{{ stats.organizations }}</strong>
+                <span>Organizations</span>
+            </div>
+            <div class="neu">
+                <strong>{{ stats.students }}</strong>
+                <span>Students</span>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- 3D scene -->
+    <div class="scene" data-scene aria-hidden="true">
+        <div class="stack">
+
+            <div class="glass hero-card layer-1">
+                <div class="card-header">
+                    <span>Open right now</span>
+                    <span class="live-dot">Live</span>
+                </div>
+
+                {% for item in latest %}
+                <div class="mini-row">
+                    <div>
+                        <strong>{{ item.title }}</strong>
+                        <small>{{ item.organization_name }} · {{ item.location }}</small>
+                    </div>
+                </div>
+                {% else %}
+                <div class="mini-row">
+                    <div>
+                        <strong>Internships appear here</strong>
+                        <small>Add opportunities to the database</small>
+                    </div>
+                </div>
+                {% endfor %}
+
+                <div class="progress-box">
+                    <div class="progress-title">
+                        <span>Typical journey</span>
+                        <span>Apply → Certificate</span>
+                    </div>
+                    <div class="progress-bar"><div></div></div>
+                </div>
+            </div>
+
+            <div class="glass chip chip-a layer-2">✅ Application approved</div>
+            <div class="glass chip chip-b layer-3">🎓 Certificate issued</div>
+
+            <div class="cube layer-4">
+                <span class="f1">🔎</span>
+                <span class="f2">📝</span>
+                <span class="f3">📊</span>
+                <span class="f4">🎓</span>
+                <span class="f5">🏢</span>
+                <span class="f6">⭐</span>
+            </div>
+
+        </div>
+    </div>
+
+</section>
+
+
+<!-- FEATURES -->
+<section class="section" id="features">
+
+    <div class="section-heading">
+        <h2>Everything an internship needs, in one place</h2>
+        <p>From the first application to the certificate at the end.</p>
+    </div>
+
+    <div class="feature-grid">
+
+        <a class="glass feature-card tilt" data-tilt
+           href="{{ url_for('opportunities') }}">
+            <div class="feature-icon neu">🔎</div>
+            <h3>Discover</h3>
+            <p>Browse internships posted by organizations, with dates,
+               locations and open slots.</p>
+        </a>
+
+        <a class="glass feature-card tilt" data-tilt
+           href="{{ url_for('my_applications') }}">
+            <div class="feature-icon neu">📝</div>
+            <h3>Apply</h3>
+            <p>Send an application in one click and follow its status.</p>
+        </a>
+
+        <a class="glass feature-card tilt" data-tilt
+           href="{{ url_for('progress') }}">
+            <div class="feature-icon neu">📊</div>
+            <h3>Track</h3>
+            <p>Review your weekly logs and hours as the internship runs.</p>
+        </a>
+
+        <a class="glass feature-card tilt" data-tilt
+           href="{{ url_for('results') }}">
+            <div class="feature-icon neu">🎓</div>
+            <h3>Complete</h3>
+            <p>See faculty and company evaluations and your certificate.</p>
+        </a>
+
+    </div>
+</section>
+
+
+<!-- WORKFLOW -->
+<section class="section">
+
+    <div class="section-heading">
+        <h2>How it works</h2>
+    </div>
+
+    <div class="workflow">
+
+        <div class="step glass">
+            <div class="step-number neu">1</div>
+            <h3>Find</h3>
+            <p>Explore the available internships.</p>
+        </div>
+
+        <div class="step glass">
+            <div class="step-number neu">2</div>
+            <h3>Apply</h3>
+            <p>Submit your application on the platform.</p>
+        </div>
+
+        <div class="step glass">
+            <div class="step-number neu">3</div>
+            <h3>Track</h3>
+            <p>Watch approval and weekly progress.</p>
+        </div>
+
+        <div class="step glass">
+            <div class="step-number neu">4</div>
+            <h3>Finish</h3>
+            <p>Collect your evaluation and certificate.</p>
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

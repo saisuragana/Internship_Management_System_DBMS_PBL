@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<section class="section page-top">
+
+    <div class="section-heading left">
+        <h2>Welcome, {{ student.name.split()[0] }}</h2>
+        <p>Here is where your internships stand today.</p>
+    </div>
+
+    <div class="glass profile">
+        <div class="avatar avatar-lg">{{ student_initial }}</div>
+        <div>
+            <strong class="profile-name">{{ student.name }}</strong>
+            <p class="muted">{{ student.email }}</p>
+        </div>
+        <div class="profile-meta">
+            <span class="pill pill-soft">{{ student.department }}</span>
+            <span class="pill pill-soft">Year {{ student.year }}</span>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        <div class="neu stat">
+            <span>Applications</span>
+            <strong>{{ applications }}</strong>
+        </div>
+        <div class="neu stat">
+            <span>Shortlisted</span>
+            <strong>{{ shortlisted }}</strong>
+        </div>
+        <div class="neu stat">
+            <span>Approved</span>
+            <strong>{{ approved }}</strong>
+        </div>
+        <div class="neu stat">
+            <span>Certificates</span>
+            <strong>{{ certificates }}</strong>
+        </div>
+    </div>
+
+    <div class="action-grid">
+        <a class="glass action tilt" data-tilt href="{{ url_for('opportunities') }}">
+            <span class="feature-icon neu">🔎</span>
+            <div><strong>Browse internships</strong>
+                 <small>See what is open</small></div>
+        </a>
+        <a class="glass action tilt" data-tilt href="{{ url_for('my_applications') }}">
+            <span class="feature-icon neu">📋</span>
+            <div><strong>My applications</strong>
+                 <small>Check statuses</small></div>
+        </a>
+        <a class="glass action tilt" data-tilt href="{{ url_for('progress') }}">
+            <span class="feature-icon neu">📊</span>
+            <div><strong>Weekly progress</strong>
+                 <small>Logs and hours</small></div>
+        </a>
+        <a class="glass action tilt" data-tilt href="{{ url_for('results') }}">
+            <span class="feature-icon neu">🎓</span>
+            <div><strong>Results</strong>
+                 <small>Evaluations and certificates</small></div>
+        </a>
+    </div>
+
+</section>
+{% endblock %}

@@ -1,0 +1,648 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+
+<section class="section page-top">
+
+    <!-- ===================================================== -->
+    <!-- HEADER -->
+    <!-- ===================================================== -->
+
+    <div class="section-heading left">
+
+        <div>
+            <span class="eyebrow">ADMIN PANEL</span>
+
+            <h2>System Overview</h2>
+
+            <p>
+                Manage internships, review student applications,
+                and assign internship supervisors.
+            </p>
+        </div>
+
+        <div class="admin-actions">
+
+            <a
+                href="{{ url_for('admin_add_opportunity') }}"
+                class="btn primary"
+            >
+                + Add Internship
+            </a>
+
+            <a
+                href="{{ url_for('admin_logout') }}"
+                class="btn secondary"
+            >
+                Logout
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- STATISTICS -->
+    <!-- ===================================================== -->
+
+    <div class="stats-grid">
+
+        <div class="neu stat">
+            <span>👩‍🎓 Students</span>
+            <strong>{{ students }}</strong>
+        </div>
+
+        <div class="neu stat">
+            <span>🏢 Organizations</span>
+            <strong>{{ organizations }}</strong>
+        </div>
+
+        <div class="neu stat">
+            <span>💼 Internships</span>
+            <strong>{{ opportunities }}</strong>
+        </div>
+
+        <div class="neu stat">
+            <span>📝 Applications</span>
+            <strong>{{ applications }}</strong>
+        </div>
+
+        <div class="neu stat">
+            <span>✅ Approved</span>
+            <strong>{{ approved }}</strong>
+        </div>
+
+        <div class="neu stat">
+            <span>🎯 Assignments</span>
+            <strong>{{ assignments }}</strong>
+        </div>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- FLASH MESSAGES -->
+    <!-- ===================================================== -->
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+
+        {% if messages %}
+
+            {% for category, message in messages %}
+
+                <div class="alert {{ category }}">
+                    {{ message }}
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+    {% endwith %}
+
+
+    <!-- ===================================================== -->
+    <!-- INTERNSHIP MANAGEMENT -->
+    <!-- ===================================================== -->
+
+    <div class="section-heading left admin-section-heading">
+
+        <div>
+
+            <span class="eyebrow">
+                MANAGEMENT
+            </span>
+
+            <h2>
+                Internship Opportunities
+            </h2>
+
+            <p>
+                Create, update and delete internship opportunities.
+            </p>
+
+        </div>
+
+        <a
+            href="{{ url_for('admin_add_opportunity') }}"
+            class="btn primary"
+        >
+            + Add Opportunity
+        </a>
+
+    </div>
+
+
+    <div class="admin-table-wrapper neu">
+
+        <table class="admin-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>ID</th>
+                    <th>Internship</th>
+                    <th>Organization</th>
+                    <th>Location</th>
+                    <th>Dates</th>
+                    <th>Slots</th>
+                    <th>Actions</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for opportunity in opportunities_list %}
+
+                <tr>
+
+                    <td>
+                        #{{ opportunity.opportunity_id }}
+                    </td>
+
+                    <td>
+                        <strong>
+                            {{ opportunity.title }}
+                        </strong>
+                    </td>
+
+                    <td>
+                        {{ opportunity.organization_name }}
+                    </td>
+
+                    <td>
+                        {{ opportunity.location }}
+                    </td>
+
+                    <td>
+                        {{ opportunity.start_date }}
+                        →
+                        {{ opportunity.end_date }}
+                    </td>
+
+                    <td>
+                        {{ opportunity.available_slots }}
+                    </td>
+
+                    <td>
+
+                        <div class="admin-actions">
+
+                            <a
+                                href="{{ url_for(
+                                    'admin_edit_opportunity',
+                                    opportunity_id=opportunity.opportunity_id
+                                ) }}"
+                                class="btn small secondary"
+                            >
+                                Edit
+                            </a>
+
+                            <form
+                                method="POST"
+                                action="{{ url_for(
+                                    'admin_delete_opportunity',
+                                    opportunity_id=opportunity.opportunity_id
+                                ) }}"
+                                onsubmit="return confirm(
+                                    'Are you sure you want to delete this internship?'
+                                );"
+                            >
+
+                                <button
+                                    type="submit"
+                                    class="btn small danger"
+                                >
+                                    Delete
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+                {% else %}
+
+                <tr>
+
+                    <td
+                        colspan="7"
+                        class="empty-state"
+                    >
+                        No internship opportunities found.
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- APPLICATION MANAGEMENT -->
+    <!-- ===================================================== -->
+
+    <div
+        class="section-heading left admin-section-heading"
+        id="applications"
+    >
+
+        <div>
+
+            <span class="eyebrow">
+                APPLICATION MANAGEMENT
+            </span>
+
+            <h2>
+                Student Applications
+            </h2>
+
+            <p>
+                Review applications, approve or reject students,
+                and assign internship mentors and supervisors.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="admin-table-wrapper neu">
+
+        <table class="admin-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>Student</th>
+                    <th>Internship</th>
+                    <th>Applied</th>
+                    <th>Status</th>
+                    <th>Review</th>
+                    <th>Assignment</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for application in applications_list %}
+
+                <tr>
+
+                    <!-- STUDENT -->
+
+                    <td>
+
+                        <strong>
+                            {{ application.student_name }}
+                        </strong>
+
+                        <br>
+
+                        <small>
+                            {{ application.student_email }}
+                        </small>
+
+                    </td>
+
+
+                    <!-- INTERNSHIP -->
+
+                    <td>
+
+                        <strong>
+                            {{ application.internship }}
+                        </strong>
+
+                        <br>
+
+                        <small>
+                            {{ application.organization }}
+                        </small>
+
+                    </td>
+
+
+                    <!-- DATE -->
+
+                    <td>
+                        {{ application.application_date|pretty_date }}
+                    </td>
+
+
+                    <!-- CURRENT STATUS -->
+
+                    <td>
+
+                        {% if application.status == "Approved" %}
+
+                            <span class="status-badge approved">
+                                Approved
+                            </span>
+
+                        {% elif application.status == "Rejected" %}
+
+                            <span class="status-badge rejected">
+                                Rejected
+                            </span>
+
+                        {% elif application.status == "Shortlisted" %}
+
+                            <span class="status-badge shortlisted">
+                                Shortlisted
+                            </span>
+
+                        {% else %}
+
+                            <span class="status-badge applied">
+                                Applied
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <!-- REVIEW FORM -->
+
+                    <td>
+
+                        <form
+                            method="POST"
+                            action="{{ url_for(
+                                'admin_update_application_status',
+                                application_id=application.application_id
+                            ) }}"
+                            class="admin-review-form"
+                        >
+
+                            <select
+                                name="status"
+                                class="admin-select"
+                            >
+
+                                <option
+                                    value="Applied"
+                                    {% if application.status == "Applied" %}
+                                    selected
+                                    {% endif %}
+                                >
+                                    Applied
+                                </option>
+
+                                <option
+                                    value="Shortlisted"
+                                    {% if application.status == "Shortlisted" %}
+                                    selected
+                                    {% endif %}
+                                >
+                                    Shortlisted
+                                </option>
+
+                                <option
+                                    value="Approved"
+                                    {% if application.status == "Approved" %}
+                                    selected
+                                    {% endif %}
+                                >
+                                    Approve
+                                </option>
+
+                                <option
+                                    value="Rejected"
+                                    {% if application.status == "Rejected" %}
+                                    selected
+                                    {% endif %}
+                                >
+                                    Reject
+                                </option>
+
+                            </select>
+
+
+                            <input
+                                type="text"
+                                name="remarks"
+                                placeholder="Remarks"
+                                value="{{ application.approval_remarks or '' }}"
+                                class="admin-input"
+                            >
+
+
+                            <button
+                                type="submit"
+                                class="btn small primary"
+                            >
+                                Update
+                            </button>
+
+                        </form>
+
+                    </td>
+
+
+                    <!-- ASSIGNMENT -->
+
+                    <td>
+
+                        {% if application.status == "Approved" %}
+
+                            {% if application.assignment_id %}
+
+                                <div class="assignment-existing">
+
+                                    <strong>
+                                        ✓ Assigned
+                                    </strong>
+
+                                    <small>
+                                        Mentor:
+                                        {{ application.faculty_mentor }}
+                                    </small>
+
+                                    <small>
+                                        Supervisor:
+                                        {{ application.company_supervisor }}
+                                    </small>
+
+                                </div>
+
+                            {% endif %}
+
+
+                            <form
+                                method="POST"
+                                action="{{ url_for(
+                                    'admin_assign_internship',
+                                    application_id=application.application_id
+                                ) }}"
+                                class="assignment-form"
+                            >
+
+                                <select
+                                    name="mentor_id"
+                                    class="admin-select"
+                                    required
+                                >
+
+                                    <option value="">
+                                        Select Faculty Mentor
+                                    </option>
+
+                                    {% for mentor in mentors %}
+
+                                    <option
+                                        value="{{ mentor.mentor_id }}"
+                                        {% if application.assignment_id
+                                           and application.faculty_mentor == mentor.name %}
+                                        selected
+                                        {% endif %}
+                                    >
+
+                                        {{ mentor.name }}
+                                        —
+                                        {{ mentor.department }}
+
+                                    </option>
+
+                                    {% endfor %}
+
+                                </select>
+
+
+                                <select
+                                    name="supervisor_id"
+                                    class="admin-select"
+                                    required
+                                >
+
+                                    <option value="">
+                                        Select Company Supervisor
+                                    </option>
+
+                                    {% for supervisor in supervisors %}
+
+                                    <option
+                                        value="{{ supervisor.supervisor_id }}"
+                                        {% if application.assignment_id
+                                           and application.company_supervisor == supervisor.name %}
+                                        selected
+                                        {% endif %}
+                                    >
+
+                                        {{ supervisor.name }}
+                                        —
+                                        {{ supervisor.organization_name }}
+
+                                    </option>
+
+                                    {% endfor %}
+
+                                </select>
+
+
+                                <button
+                                    type="submit"
+                                    class="btn small primary"
+                                >
+
+                                    {% if application.assignment_id %}
+                                        Update Assignment
+                                    {% else %}
+                                        Assign Internship
+                                    {% endif %}
+
+                                </button>
+
+                            </form>
+
+                        {% else %}
+
+                            <span class="assignment-waiting">
+                                Approve application first
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+                </tr>
+
+                {% else %}
+
+                <tr>
+
+                    <td
+                        colspan="6"
+                        class="empty-state"
+                    >
+
+                        No student applications yet.
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- WORKFLOW INFORMATION -->
+    <!-- ===================================================== -->
+
+    <div class="glass admin-workflow">
+
+        <span class="eyebrow">
+            INTERNSHIP WORKFLOW
+        </span>
+
+        <div class="workflow-steps">
+
+            <span>1. Student Applies</span>
+
+            <span>→</span>
+
+            <span>2. Admin Reviews</span>
+
+            <span>→</span>
+
+            <span>3. Admin Approves</span>
+
+            <span>→</span>
+
+            <span>4. Mentor + Supervisor Assigned</span>
+
+            <span>→</span>
+
+            <span>5. Progress Monitoring</span>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
